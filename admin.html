@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance System - Admin Panel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>👨‍💼 Admin Panel</h1>
+            <button id="logoutBtn" class="btn-secondary">Logout</button>
+        </header>
+        
+        <div class="admin-nav">
+            <button class="nav-btn active" data-section="summary">Summary</button>
+            <button class="nav-btn" data-section="reports">Monthly Reports</button>
+            <button class="nav-btn" data-section="settings">Settings</button>
+        </div>
+        
+        <!-- Summary Section -->
+        <div id="summarySection" class="admin-section">
+            <h2>Attendance Summary</h2>
+            
+            <div class="filter-controls">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="summaryMonth">Month:</label>
+                        <select id="summaryMonth">
+                            <option value="">All Months</option>
+                            <option value="01">January</option>
+                            <option value="02">February</option>
+                            <option value="03">March</option>
+                            <option value="04">April</option>
+                            <option value="05">May</option>
+                            <option value="06">June</option>
+                            <option value="07">July</option>
+                            <option value="08">August</option>
+                            <option value="09">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="summaryYear">Year:</label>
+                        <select id="summaryYear">
+                            <option value="">All Years</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button id="refreshSummary" class="btn-primary">Refresh</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="summary-stats">
+                <div class="stat-card">
+                    <h3>Total Classes</h3>
+                    <span id="totalClassesCount">0</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Students</h3>
+                    <span id="totalStudentsCount">0</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Overall Attendance</h3>
+                    <span id="overallAttendance">0%</span>
+                </div>
+            </div>
+            
+            <h3>Class-wise Summary</h3>
+            <div class="table-container">
+                <table id="classSummaryTable" class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Class</th>
+                            <th>Total Students</th>
+                            <th>Total Classes</th>
+                            <th>Present Count</th>
+                            <th>Absent Count</th>
+                            <th>Attendance %</th>
+                        </tr>
+                    </thead>
+                    <tbody id="classSummaryTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Monthly Reports Section -->
+        <div id="reportsSection" class="admin-section" style="display: none;">
+            <h2>Monthly Reports</h2>
+            
+            <div class="filter-controls">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reportMonth">Month:</label>
+                        <select id="reportMonth">
+                            <option value="">Select Month</option>
+                            <option value="01">January</option>
+                            <option value="02">February</option>
+                            <option value="03">March</option>
+                            <option value="04">April</option>
+                            <option value="05">May</option>
+                            <option value="06">June</option>
+                            <option value="07">July</option>
+                            <option value="08">August</option>
+                            <option value="09">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reportYear">Year:</label>
+                        <select id="reportYear">
+                            <option value="">Select Year</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button id="generateReport" class="btn-primary">Generate Report</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="reportResults" class="report-results" style="display: none;">
+                <h3>Monthly Attendance Report</h3>
+                <div class="table-container">
+                    <table id="monthlyReportTable" class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Class</th>
+                                <th>Total Classes</th>
+                                <th>Total Students</th>
+                                <th>Present Count</th>
+                                <th>Absent Count</th>
+                                <th>Attendance %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthlyReportTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Settings Section -->
+        <div id="settingsSection" class="admin-section" style="display: none;">
+            <h2>System Settings</h2>
+            
+            <div class="settings-grid">
+                <div class="setting-card">
+                    <h3>Export Data</h3>
+                    <p>Export attendance data to CSV</p>
+                    <button id="exportData" class="btn-primary">Export</button>
+                </div>
+                
+                <div class="setting-card">
+                    <h3>Clear Data</h3>
+                    <p>Clear all attendance records</p>
+                    <button id="clearData" class="btn-danger">Clear All Data</button>
+                </div>
+                
+                <div class="setting-card">
+                    <h3>Backup Data</h3>
+                    <p>Create backup of all data</p>
+                    <button id="backupData" class="btn-primary">Backup</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+    </div>
+    
+    <script src="js/admin.js"></script>
+</body>
+</html>
+

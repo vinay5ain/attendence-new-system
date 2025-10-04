@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance System - Student Attendance</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>📝 Student Attendance</h1>
+            <button id="logoutBtn" class="btn-secondary">Logout</button>
+        </header>
+        
+        <div class="attendance-form">
+            <form id="attendanceForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" id="date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="teacherName">Teacher Name:</label>
+                        <input type="text" id="teacherName" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="subject">Subject:</label>
+                        <input type="text" id="subject" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="className">Class:</label>
+                        <select id="className" required>
+                            <option value="">Select Class</option>
+                            <option value="bca1">BCA 1st Year</option>
+                            <option value="bca2">BCA 2nd Year</option>
+                            <option value="bca3">BCA 3rd Year</option>
+                            <option value="bba1">BBA 1st Year</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="classTime">Class Time:</label>
+                        <input type="text" id="classTime" placeholder="e.g., 09:00-10:00" required>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div id="studentsSection" class="students-section" style="display: none;">
+            <h2>Student List</h2>
+            <div class="table-container">
+                <table id="studentsTable" class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Roll No</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>City</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="saveAttendanceBtn" class="btn-primary">Save Attendance</button>
+                <button id="clearBtn" class="btn-secondary">Clear</button>
+            </div>
+        </div>
+        
+        <div id="successMessage" class="success-message"></div>
+        <div id="errorMessage" class="error-message"></div>
+    </div>
+    
+    <script src="js/student.js"></script>
+</body>
+</html>

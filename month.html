@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance System - Monthly Report</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>📊 Monthly Attendance Report</h1>
+            <button id="logoutBtn" class="btn-secondary">Logout</button>
+        </header>
+        
+        <div class="filter-section">
+            <form id="filterForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="selectedMonth">Month:</label>
+                        <select id="selectedMonth" required>
+                            <option value="">Select Month</option>
+                            <option value="01">January</option>
+                            <option value="02">February</option>
+                            <option value="03">March</option>
+                            <option value="04">April</option>
+                            <option value="05">May</option>
+                            <option value="06">June</option>
+                            <option value="07">July</option>
+                            <option value="08">August</option>
+                            <option value="09">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="selectedYear">Year:</label>
+                        <select id="selectedYear" required>
+                            <option value="">Select Year</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="selectedClass">Class:</label>
+                        <select id="selectedClass" required>
+                            <option value="">Select Class</option>
+                            <option value="bca1">BCA 1st Year</option>
+                            <option value="bca2">BCA 2nd Year</option>
+                            <option value="bca3">BCA 3rd Year</option>
+                            <option value="bba1">BBA 1st Year</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn-primary">Generate Report</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div id="reportSection" class="report-section" style="display: none;">
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>Total Classes</h3>
+                    <span id="totalClasses">0</span>
+                </div>
+                <div class="summary-card">
+                    <h3>Total Students</h3>
+                    <span id="totalStudents">0</span>
+                </div>
+                <div class="summary-card">
+                    <h3>Avg. Attendance</h3>
+                    <span id="avgAttendance">0%</span>
+                </div>
+            </div>
+            
+            <h2>Daily Attendance Records</h2>
+            <div class="table-container">
+                <table id="monthlyTable" class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Teacher</th>
+                            <th>Subject</th>
+                            <th>Time</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="monthlyTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Student Details Modal -->
+        <div id="studentModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Student Details</h3>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div id="studentDetails"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="errorMessage" class="error-message"></div>
+    </div>
+    
+    <script src="js/month.js"></script>
+</body>
+</html>
