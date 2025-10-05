@@ -24,6 +24,11 @@ window.addEventListener('load', function() {
     document.getElementById('summaryYear').value = now.getFullYear();
     document.getElementById('reportYear').value = now.getFullYear();
     
+    // Default daily log date
+    const today = new Date().toISOString().split('T')[0];
+    const dailyDateEl = document.getElementById('dailyDate');
+    if (dailyDateEl) dailyDateEl.value = today;
+    
     // Load all data
     loadAllData();
 });
@@ -227,6 +232,182 @@ function renderMonthlyReportTable(data) {
         `;
         tbody.appendChild(row);
     });
+}
+
+// Daily Log: render table
+function updateDailyLog() {
+    const dateVal = document.getElementById('dailyDate') ? document.getElementById('dailyDate').value : '';
+    const classFilter = document.getElementById('dailyClass') ? document.getElementById('dailyClass').value : '';
+    const tbody = document.getElementById('dailyLogTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    
+    // Build a flat list of records filtered by date/class
+    const rows = [];
+    classes.forEach(className => {
+        if (classFilter && classFilter !== className) return;
+        const classRecords = allAttendanceData[className] || [];
+        classRecords.forEach(record => {
+            const isSameDate = !dateVal || record.date === dateVal;
+            if (!isSameDate) return;
+            let presentCount = 0;
+            let absentCount = 0;
+            (record.students || []).forEach(s => {
+                if (s.present) presentCount++; else absentCount++;
+            });
+            rows.push({
+                date: record.date,
+                class: className.toUpperCase(),
+                teacher: record.teacher || '',
+                subject: record.subject || '',
+                time: record.time || '',
+                present: presentCount,
+                absent: absentCount
+            });
+        });
+    });
+    
+    // Sort rows by date then class then time
+    rows.sort((a, b) => {
+        if (a.date !== b.date) return a.date.localeCompare(b.date);
+        if (a.class !== b.class) return a.class.localeCompare(b.class);
+        return (a.time || '').localeCompare(b.time || '');
+    });
+    
+    // Render
+    rows.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${item.date}</td>
+            <td>${item.class}</td>
+            <td>${item.teacher}</td>
+            <td>${item.subject}</td>
+            <td>${item.time}</td>
+            <td class="present-count">${item.present}</td>
+            <td class="absent-count">${item.absent}</td>
+            <td>
+                <button class="btn-secondary btn-view-sheet" data-date="${item.date}" data-class="${item.class}" data-time="${item.time}" data-teacher="${item.teacher}" data-subject="${item.subject}">View</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Daily filters
+document.addEventListener('click', function(e) {
+    const target = e.target;
+    if (target && target.id === 'refreshDaily') {
+        updateDailyLog();
+    }
+    if (target && target.classList.contains('btn-view-sheet')) {
+        const date = target.getAttribute('data-date');
+        const classLabel = target.getAttribute('data-class');
+        const className = classLabel ? classLabel.toLowerCase() : '';
+        const time = target.getAttribute('data-time') || '';
+        const teacher = target.getAttribute('data-teacher') || '';
+        const subject = target.getAttribute('data-subject') || '';
+        openSheetModal({ date, className, classLabel, time, teacher, subject });
+    }
+    if (target && target.id === 'closeSheetModal') {
+        closeSheetModal();
+    }
+    if (target && target.id === 'viewAllDaily') {
+        openAllSheetsForDay();
+    }
+});
+
+// Update daily log when data loads
+const _origLoadAllData = loadAllData;
+loadAllData = async function() {
+    await _origLoadAllData();
+    updateDailyLog();
+};
+
+function openSheetModal(meta) {
+    const modal = document.getElementById('sheetModal');
+    const title = document.getElementById('sheetModalTitle');
+    const tbody = document.getElementById('sheetTableBody');
+    if (!modal || !tbody) return;
+    
+    // Find the specific record by date, class and (optional) time
+    const records = (allAttendanceData[meta.className] || []).filter(r => r.date === meta.date);
+    let record = records.find(r => (r.time || '') === meta.time);
+    if (!record && records.length > 0) record = records[0];
+    if (!record) {
+        showError('Attendance sheet not found.');
+        return;
+    }
+    
+    title.textContent = `Sheet: ${meta.classLabel} | ${meta.date} | ${meta.time} | ${meta.subject}`;
+    tbody.innerHTML = '';
+    
+    // Map student ids to info for roll no
+    const students = allStudentsData[meta.className] || [];
+    const idToStudent = {};
+    students.forEach(s => { idToStudent[String(s.id)] = s; });
+    
+    (record.students || []).forEach(s => {
+        const info = idToStudent[String(s.id)] || {};
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${info.rollNo || ''}</td>
+            <td>${s.name || info.name || ''}</td>
+            <td>${s.present ? 'Present' : 'Absent'}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+    
+    modal.style.display = 'block';
+}
+
+function closeSheetModal() {
+    const modal = document.getElementById('sheetModal');
+    if (modal) modal.style.display = 'none';
+}
+
+function openAllSheetsForDay() {
+    const dateVal = document.getElementById('dailyDate') ? document.getElementById('dailyDate').value : '';
+    const classFilter = document.getElementById('dailyClass') ? document.getElementById('dailyClass').value : '';
+    if (!dateVal) {
+        showError('Please select a date first');
+        return;
+    }
+    
+    // Build a simple printable window containing all sheets for that day and class (or all)
+    let html = '<html><head><title>Attendance Sheets</title>' +
+        '<style>body{font-family:Arial;padding:16px;} h2{margin:12px 0;} table{width:100%;border-collapse:collapse;margin-bottom:16px;} th,td{border:1px solid #ccc;padding:6px;text-align:left;} .present{color:green;font-weight:bold;} .absent{color:#b00;font-weight:bold;}</style>' +
+        '</head><body>';
+    
+    classes.forEach(className => {
+        if (classFilter && classFilter !== className) return;
+        const classRecords = (allAttendanceData[className] || []).filter(r => r.date === dateVal);
+        if (classRecords.length === 0) return;
+        const students = allStudentsData[className] || [];
+        const idToStudent = {};
+        students.forEach(s => { idToStudent[String(s.id)] = s; });
+        
+        classRecords.forEach(record => {
+            html += `<h2>${className.toUpperCase()} | ${record.date} | ${record.time || ''} | ${record.subject || ''} | ${record.teacher || ''}</h2>`;
+            html += '<table><thead><tr><th>Roll No</th><th>Name</th><th>Status</th></tr></thead><tbody>';
+            (record.students || []).forEach(s => {
+                const info = idToStudent[String(s.id)] || {};
+                const statusText = s.present ? 'Present' : 'Absent';
+                const statusCls = s.present ? 'present' : 'absent';
+                html += `<tr><td>${info.rollNo || ''}</td><td>${s.name || info.name || ''}</td><td class="${statusCls}">${statusText}</td></tr>`;
+            });
+            html += '</tbody></table>';
+        });
+    });
+    
+    html += '</body></html>';
+    const w = window.open('', '_blank');
+    if (!w) {
+        showError('Popup blocked. Allow popups to view all sheets.');
+        return;
+    }
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
 }
 
 // Export data

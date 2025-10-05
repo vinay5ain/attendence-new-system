@@ -15,6 +15,7 @@
         
         <div class="admin-nav">
             <button class="nav-btn active" data-section="summary">Summary</button>
+            <button class="nav-btn" data-section="daily">Daily Log</button>
             <button class="nav-btn" data-section="reports">Monthly Reports</button>
             <button class="nav-btn" data-section="settings">Settings</button>
         </div>
@@ -93,6 +94,79 @@
             </div>
         </div>
         
+        <!-- Daily Log Section -->
+        <div id="dailySection" class="admin-section" style="display: none;">
+            <h2>Daily Attendance Log</h2>
+            
+            <div class="filter-controls">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dailyDate">Date:</label>
+                        <input type="date" id="dailyDate">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dailyClass">Class:</label>
+                        <select id="dailyClass">
+                            <option value="">All Classes</option>
+                            <option value="bca1">BCA 1st Year</option>
+                            <option value="bca2">BCA 2nd Year</option>
+                            <option value="bca3">BCA 3rd Year</option>
+                            <option value="bba1">BBA 1st Year</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button id="refreshDaily" class="btn-primary">Refresh</button>
+                        <button id="viewAllDaily" class="btn-secondary">View All (Day)</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table id="dailyLogTable" class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Class</th>
+                            <th>Teacher</th>
+                            <th>Subject</th>
+                            <th>Time</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dailyLogTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Modal: Attendance Sheet -->
+        <div id="sheetModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="sheetModalTitle">Attendance Sheet</h3>
+                    <button id="closeSheetModal" class="btn-secondary">Close</button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-container">
+                        <table class="attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Roll No</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sheetTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Monthly Reports Section -->
         <div id="reportsSection" class="admin-section" style="display: none;">
             <h2>Monthly Reports</h2>
